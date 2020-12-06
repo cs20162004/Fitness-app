@@ -25,7 +25,14 @@
         android:text="Pause"
         android:layout_alignTop="@+id/buttonstart"/>
 
-
+    <Button
+        android:id="@+id/buttonreset"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_toRightOf ="@+id/buttonstart"
+        android:layout_marginLeft="11dp"
+        android:text="Reset"
+        android:layout_alignTop="@+id/buttonstart"/>
 
 
     <Chronometer

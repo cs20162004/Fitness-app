@@ -36,6 +36,7 @@ public class LocationService extends Service {
     public static double Km = 0;
     public static double prevaltitude = 0;
     public static double total_kcal = 0;
+    public static int counter = 0;
 
 
 
@@ -49,11 +50,12 @@ public class LocationService extends Service {
                 double altitude = locationResult.getLastLocation().getAltitude();
                 Log.d("LOCATION_UPDATE", latitude + ", " + longitude);
 
-                if (prevlat == 0 && prevlong == 0){
+                if ((prevlat == 0 && prevlong == 0) || counter > 2){
                     prevlat = latitude;
                     prevlong = longitude;
                     prevaltitude = altitude;
-                }else{
+                    counter = counter + 1;
+                }else if (MainActivity.running == true){
                     Location locationprev = new Location("locationprev");
                     locationprev.setLongitude(prevlong);
                     locationprev.setLatitude(prevlat);
@@ -70,23 +72,33 @@ public class LocationService extends Service {
                     MainActivity.km_id.setText(km_id);
 
                     String speed_id = df.format(distance * 3600 / 3);
-                    MainActivity.speed_id.setText(speed_id);
+                    if (distance * 1200 > 0.1){
+                        MainActivity.speed_id.setText(speed_id);
+                    }
+
 
                     double inclination = (altitude - prevaltitude) / (distance * 10);
                     String slope_id = df.format(inclination);
+                    //if (inclination != 0)
                     MainActivity.slope_id.setText(slope_id);
+                    //else
+                    //    MainActivity.slope_id.setText("0.00");
 
-                    double kcal_burned = distance * 1.036;
+                    double kcal_burned = distance * 1.036 * 100;
+                    total_kcal = total_kcal + kcal_burned;
 
                     if (altitude < prevaltitude){
-                        total_kcal = total_kcal + kcal_burned - (0.066 * kcal_burned * inclination);
-                    }else{
-                        total_kcal = total_kcal + kcal_burned + (0.12 * kcal_burned * inclination);
+                        total_kcal = total_kcal - (0.066 * kcal_burned * inclination);
+                    }else if (altitude > prevaltitude){
+                        total_kcal = total_kcal + (0.12 * kcal_burned * inclination);
                     }
-                    MainActivity.kcal_id.setText((int) total_kcal);
+
+                    String kcal_id = df.format(total_kcal);
+                    MainActivity.kcal_id.setText(kcal_id);
 
                     prevlat = latitude;
                     prevlong = longitude;
+                    prevaltitude = altitude;
                 }
             }
         }

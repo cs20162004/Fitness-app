@@ -18,6 +18,8 @@ import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.trial.LocationService;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
@@ -77,6 +79,24 @@ public class MainActivity extends AppCompatActivity {
                     pauseoffset = SystemClock.elapsedRealtime() - chronometer.getBase();
                     running = false;
                 }
+            }
+        });
+
+        findViewById(R.id.buttonreset).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chronometer.setBase(SystemClock.elapsedRealtime());
+                pauseoffset = 0;
+
+                kcal_id.setText("0.0");
+                speed_id.setText("0.0");
+                slope_id.setText("0.00");
+                km_id.setText("0.00");
+
+                LocationService.Km = 0;
+                LocationService.total_kcal = 0;
+                LocationService.prevlat = 0;
+                LocationService.prevlong = 0;
             }
         });
     }
