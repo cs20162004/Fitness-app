@@ -1,21 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
+    android:layout_weight="2"
     tools:context=".MainActivity">
 
     <Button
         android:id="@+id/buttonstart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="start"/>
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_below="@+id/time"
+        android:layout_marginTop="30dp"
+        android:text="START"/>
 
     <Button
+        android:id="@+id/buttonstop"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_toLeftOf ="@+id/buttonstart"
+        android:layout_marginRight="11dp"
+        android:text="Pause"
+        android:layout_alignTop="@+id/buttonstart"/>
+
+
+
+
+    <Chronometer
+        android:id="@+id/timer_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/buttonstop"
-        android:text="stop"/>
-</LinearLayout>
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="10dp"
+        android:textSize="40dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/timer_id"
+        android:text="Time"
+        android:textSize="40dp"
+        android:id="@+id/time"
+        android:layout_alignLeft="@+id/timer_id"
+        android:layout_alignRight="@+id/timer_id"/>
+
+
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/timer_id"
+        android:layout_alignBottom="@+id/timer_id"
+        android:layout_alignTop="@+id/timer_id"
+        android:text="0.00"
+        android:textSize="30dp"
+        android:gravity="center"
+        android:id="@+id/km_id"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/time"
+        android:layout_alignTop="@+id/time"
+        android:text="Km"
+        android:layout_toRightOf="@+id/time"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:id="@+id/km"/>
+
+
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/timer_id"
+        android:layout_alignBottom="@+id/timer_id"
+        android:layout_alignTop="@+id/timer_id"
+        android:text="0.00"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:id="@+id/slope_id"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/time"
+        android:layout_alignTop="@+id/time"
+        android:text="Slope"
+        android:layout_toLeftOf="@+id/time"
+        android:gravity="center"
+        android:textSize="30dp" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/timer_id"
+        android:id="@+id/center"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/timer_id"
+        android:layout_toLeftOf="@+id/center"
+        android:text="Kcal"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:id="@+id/kcal"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/kcal"
+        android:layout_toLeftOf="@+id/center"
+        android:text="0.0"
+        android:gravity="center"
+        android:textSize="40dp"
+        android:id="@+id/kcal_id"/>
+
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/timer_id"
+        android:layout_toRightOf="@+id/center"
+        android:text="Speed"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:id="@+id/speed"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/speed"
+        android:layout_toRightOf="@+id/center"
+        android:text="0.0"
+        android:gravity="center"
+        android:textSize="40dp"
+        android:id="@+id/speed_id"/>
+
+
+
+</RelativeLayout>

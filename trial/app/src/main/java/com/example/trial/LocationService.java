@@ -9,10 +9,12 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -23,7 +25,19 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
+import com.example.trial.MainActivity;
+
+import java.text.DecimalFormat;
+
 public class LocationService extends Service {
+
+    public static double prevlat = 0;
+    public static double prevlong = 0;
+    public static double Km = 0;
+    public static double prevaltitude = 0;
+    public static double total_kcal = 0;
+
+
 
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
@@ -32,9 +46,48 @@ public class LocationService extends Service {
             if (locationResult != null && locationResult.getLastLocation() != null) {
                 double latitude = locationResult.getLastLocation().getLatitude();
                 double longitude = locationResult.getLastLocation().getLongitude();
-                System.out.println(longitude);
-                System.out.println(latitude);
+                double altitude = locationResult.getLastLocation().getAltitude();
                 Log.d("LOCATION_UPDATE", latitude + ", " + longitude);
+
+                if (prevlat == 0 && prevlong == 0){
+                    prevlat = latitude;
+                    prevlong = longitude;
+                    prevaltitude = altitude;
+                }else{
+                    Location locationprev = new Location("locationprev");
+                    locationprev.setLongitude(prevlong);
+                    locationprev.setLatitude(prevlat);
+
+                    Location currentlocation = new Location("currentlocation");
+                    currentlocation.setLatitude(latitude);
+                    currentlocation.setLongitude(longitude);
+
+                    double distance = locationprev.distanceTo(currentlocation) / 1000;
+                    Km = Km + distance;
+
+                    DecimalFormat df = new DecimalFormat("#.00");
+                    String km_id = df.format(Km);
+                    MainActivity.km_id.setText(km_id);
+
+                    String speed_id = df.format(distance * 3600 / 3);
+                    MainActivity.speed_id.setText(speed_id);
+
+                    double inclination = (altitude - prevaltitude) / (distance * 10);
+                    String slope_id = df.format(inclination);
+                    MainActivity.slope_id.setText(slope_id);
+
+                    double kcal_burned = distance * 1.036;
+
+                    if (altitude < prevaltitude){
+                        total_kcal = total_kcal + kcal_burned - (0.066 * kcal_burned * inclination);
+                    }else{
+                        total_kcal = total_kcal + kcal_burned + (0.12 * kcal_burned * inclination);
+                    }
+                    MainActivity.kcal_id.setText((int) total_kcal);
+
+                    prevlat = latitude;
+                    prevlong = longitude;
+                }
             }
         }
     };

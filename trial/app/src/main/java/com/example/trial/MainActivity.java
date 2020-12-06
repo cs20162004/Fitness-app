@@ -12,17 +12,38 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
+import android.widget.Chronometer;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
+    public static boolean running;
+    private long pauseoffset;
+
+    private Chronometer chronometer;
+
+    public static TextView km_id;
+    public static TextView slope_id;
+    public static TextView kcal_id;
+    public static TextView speed_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        km_id = findViewById(R.id.km_id);
+        slope_id = findViewById(R.id.slope_id);
+        kcal_id = findViewById(R.id.kcal_id);
+        speed_id = findViewById(R.id.speed_id);
+
+        chronometer = findViewById(R.id.timer_id);
+        chronometer.setFormat("%s");
+        chronometer.setBase(SystemClock.elapsedRealtime());
 
         findViewById(R.id.buttonstart).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,6 +58,12 @@ public class MainActivity extends AppCompatActivity {
                 }else {
                     startLocationService();
                 }
+
+                if (!running) {
+                    chronometer.setBase(SystemClock.elapsedRealtime() - pauseoffset);
+                    chronometer.start();
+                    running = true;
+                }
             }
         });
 
@@ -44,6 +71,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 stopLocationService();
+
+                if (running){
+                    chronometer.stop();
+                    pauseoffset = SystemClock.elapsedRealtime() - chronometer.getBase();
+                    running = false;
+                }
             }
         });
     }
