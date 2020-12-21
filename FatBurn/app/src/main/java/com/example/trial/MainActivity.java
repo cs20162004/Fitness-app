@@ -1,4 +1,4 @@
-package com.example.fatburner;
+package com.example.trial;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.fatburner.LocationService;
+import com.example.trial.LocationService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     public static boolean running;
     private long pauseoffset;
 
-    public static Chronometer chronometer;
+    private Chronometer chronometer;
 
     public static TextView km_id;
     public static TextView slope_id;
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 user_weight = Double.valueOf(weight_id.getText().toString());
 
                 if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                        != PackageManager.PERMISSION_DENIED) {
+                != PackageManager.PERMISSION_DENIED) {
                     ActivityCompat.requestPermissions(
                             MainActivity.this,
                             new String[]{Manifest.permission.ACCESS_FINE_LOCATION},

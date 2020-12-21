@@ -1,6 +1,7 @@
-package com.example.fatburner;
+package com.example.trial;
 
 import android.Manifest;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,6 +14,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -22,13 +24,10 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.example.fatburner.MainActivity;
-import android.os.SystemClock;
 
-import java.io.IOException;
-import java.io.InputStream;
+import com.example.trial.MainActivity;
+
 import java.text.DecimalFormat;
-
 
 public class LocationService extends Service {
 
@@ -37,12 +36,7 @@ public class LocationService extends Service {
     public static double Km = 0;
     public static double prevaltitude = 0;
     public static double total_kcal = 0;
-    public static double longitude;
-    public static double latitude;
-    public static double altitude;
     public static int counter = 0;
-    public static double prevtime = 0;
-    public static double time;
     int k = 1;
 
 
@@ -52,11 +46,9 @@ public class LocationService extends Service {
         public void onLocationResult(LocationResult locationResult) {
             super.onLocationResult(locationResult);
             if (locationResult != null && locationResult.getLastLocation() != null) {
-                latitude = locationResult.getLastLocation().getLatitude();
-                longitude = locationResult.getLastLocation().getLongitude();
-                altitude = (locationResult.getLastLocation().getAltitude() + locationResult.getLastLocation().getAltitude() + locationResult.getLastLocation().getAltitude() + locationResult.getLastLocation().getAltitude()) / 4;
-                time = (double) (SystemClock.elapsedRealtime() - MainActivity.chronometer.getBase()) / (1000 * 3600);
-
+                double latitude = locationResult.getLastLocation().getLatitude();
+                double longitude = locationResult.getLastLocation().getLongitude();
+                double altitude = locationResult.getLastLocation().getAltitude();
                 Log.d("LOCATION_UPDATE", latitude + ", " + longitude);
 
                 if ((prevlat == 0 && prevlong == 0) || counter > 2){
@@ -64,8 +56,7 @@ public class LocationService extends Service {
                     prevlong = longitude;
                     prevaltitude = altitude;
                     counter = counter + 1;
-                    prevtime = time;
-                }else if (MainActivity.running){
+                }else if (MainActivity.running == true){
                     Location locationprev = new Location("locationprev");
                     locationprev.setLongitude(prevlong);
                     locationprev.setLatitude(prevlat);
@@ -81,31 +72,27 @@ public class LocationService extends Service {
                     String km_id = df.format(Km);
                     MainActivity.km_id.setText(km_id);
 
-                    String speed_id = df.format(Km / time);
+                    String speed_id = df.format(Km * 3600 / (3 * k));
                     if (distance * 1200 > 0.1){
                         MainActivity.speed_id.setText(speed_id);
                     }
 
 
-                    double inclination = (altitude - prevaltitude) * 100 / (distance);
+                    double inclination = (altitude - prevaltitude) / (distance * 10);
                     String slope_id = df.format(inclination);
                     //if (inclination != 0)
                     MainActivity.slope_id.setText(slope_id);
                     //else
                     //    MainActivity.slope_id.setText("0.00");
 
-                    //double kcal_burned = distance * 1.036 * MainActivity.user_weight;
-                    double diftime = time - prevtime;
-                    double kcal_burned = (0.0215*(distance / diftime)*(distance / diftime)*(distance / diftime) - 0.1765*(distance / diftime)*(distance / diftime) + 0.8710*(distance / diftime) + 1.4577) * MainActivity.user_weight * diftime;
-
-
+                    double kcal_burned = distance * 1.036 * MainActivity.user_weight;
                     total_kcal = total_kcal + kcal_burned;
 
-                    //if (altitude < prevaltitude){
-                    //    total_kcal = total_kcal - (0.066 * kcal_burned * inclination);
-                    //}else if (altitude > prevaltitude){
-                    //    total_kcal = total_kcal + (0.12 * kcal_burned * inclination);
-                    //}
+                    if (altitude < prevaltitude){
+                        total_kcal = total_kcal - (0.066 * kcal_burned * inclination);
+                    }else if (altitude > prevaltitude){
+                        total_kcal = total_kcal + (0.12 * kcal_burned * inclination);
+                    }
 
                     String kcal_id = df.format(total_kcal);
                     MainActivity.kcal_id.setText(kcal_id);
@@ -113,7 +100,6 @@ public class LocationService extends Service {
                     prevlat = latitude;
                     prevlong = longitude;
                     prevaltitude = altitude;
-                    prevtime = time;
                     k = k + 1;
                 }
             }
@@ -191,5 +177,4 @@ public class LocationService extends Service {
         }
         return super.onStartCommand(intent, flags, startId);
     }
-
 }
